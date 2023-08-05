@@ -5,7 +5,7 @@
     <Resource name="jdbc/javaFramework" type="javax.sql.DataSource"
         url="jdbc:mysql://localhost:3306/JAVA_FRAMEWORK"
         username="root"
-        password="sql00289Addspl"
+        password="root"
         driverClassName="com.mysql.cj.jdbc.Driver"
         maxActive="8"
       	maxIdle="4"
