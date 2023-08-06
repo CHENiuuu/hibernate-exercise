@@ -13,12 +13,15 @@
 <!-- 		<property name="hibernate.connection.datasource">java:comp/jdbc/javaFramework</property> -->
 		
 		<!--第二種執行方式 講義8-1 -->
-<!-- 		<property name="hibernate.current_session_context_class">thread</property> -->
+		<property name="hibernate.current_session_context_class">thread</property>
 
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
         <property name="hibernate.show_sql">true</property>
         <property name="hibernate.highlight_sql">true</property>
         
-        <mapping class="web.member.pojo.Member" />
+        <mapping class="web.member.entity.Member" />
+        <mapping class="web.emp.entity.Dept" />
+        <mapping class="web.emp.entity.Emp" />
+        
     </session-factory>
 </hibernate-configuration>

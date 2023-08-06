@@ -1,11 +1,5 @@
 package web.member.dao.impl;
 
-import static core.util.CommonUtil.getConnection;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -16,18 +10,18 @@ import org.hibernate.Session;
 import org.hibernate.query.Query;
 
 import web.member.dao.MemberDao;
-import web.member.pojo.Member;
+import web.member.entity.Member;
 
 public class MemberDaoImpl implements MemberDao {
 
 	@Override
 	public int insert(Member member) {
-		
-		//Hibernate
+
+		// Hibernate
 		getSession().persist(member);
 		return 1;
-		
-		//JDBC
+
+		// JDBC
 //		final String sql = "insert into MEMBER(USERNAME, PASSWORD, NICKNAME, ROLE_ID) " + "values(?, ?, ?, ?)";
 //		try (
 //			Connection conn = getConnection();
@@ -41,19 +35,19 @@ public class MemberDaoImpl implements MemberDao {
 //			e.printStackTrace();
 //		}
 //		return -1;
-		
+
 	}
 
 	@Override
 	public int deleteById(Integer id) {
-		
-		//Hibernate
+
+		// Hibernate
 		Session session = getSession();
 		Member member = session.get(Member.class, id);
 		session.remove(member);
 		return 1;
-		
-		//JDBC
+
+		// JDBC
 //		final String sql = "delete from MEMBER where ID = ?";
 //		try (
 //			Connection conn = getConnection();
@@ -68,35 +62,31 @@ public class MemberDaoImpl implements MemberDao {
 
 	@Override
 	public int update(Member member) {
-		final StringBuilder hql = new StringBuilder()
-			.append("UPDATE Member SET ");
-		int offset = 0;
+		final StringBuilder hql = new StringBuilder().append("UPDATE Member SET ");
 		final String password = member.getPassword();
 		if (password != null && !password.isEmpty()) {
-			hql.append("PASSWORD = :password,");
-			offset = 1;
+			hql.append("password = :password, ");
 		}
-		hql.append("nickname = :nickname,")
-			.append("pass = :pass,")
-			.append("roleId = :roleId,")
-			.append("updater = :updater,")
-			.append("lastUpdatedDate = NOW() ")
+		hql.append("NICKNAME = :nikename, ")
+			.append("pass = :pass, ")
+			.append("role_id = :role_id, ")
+			.append("updater = :updater, ")
+			.append("last_updated_date = NOW() ")
 			.append("WHERE username = :username");
-		
+
 		Query<?> query = getSession().createQuery(hql.toString());
-		if(password != null && password.isEmpty()) {
+		if (password != null && !password.isEmpty()) {
 			query.setParameter("password", password);
 		}
-		
-		return query
-			.setParameter("nickname", member.getNickname())
-			.setParameter("pass", member.getPass())
-			.setParameter("roleId", member.getRoleId())
-			.setParameter("updater", member.getUpdater())
-			.setParameter("username", member.getUsername())
-			.executeUpdate();
-		
-		//sql
+		return query.setParameter("nikename", member.getNickname())
+				.setParameter("pass", member.getPass())
+				.setParameter("role_id", member.getRoleId())
+				.setParameter("updater", member.getUpdater())
+				.setParameter("username", member.getUsername())
+				.executeUpdate();
+	
+
+	// sql
 //		try (
 //			Connection conn = getConnection();
 //			PreparedStatement pstmt = conn.prepareStatement(sql.toString())
@@ -118,12 +108,11 @@ public class MemberDaoImpl implements MemberDao {
 
 	@Override
 	public Member selectById(Integer id) {
-		
-		//Hibernate
+
+		// Hibernate
 		return getSession().get(Member.class, id);
-		
-		
-		//JDBC
+
+		// JDBC
 //		final String sql = "select * from MEMBER where ID = ?";
 //		try (
 //			Connection conn = getConnection();
@@ -156,13 +145,11 @@ public class MemberDaoImpl implements MemberDao {
 	public List<Member> selectAll() {
 //		final String sql = "select * from MEMBER order by ID";
 		final String hql = "FROM Member ORDER BY id";
-		
-		//hql
-		return getSession()
-				.createQuery(hql, Member.class)
-				.getResultList();
-		
-		//sql
+
+		// hql
+		return getSession().createQuery(hql, Member.class).getResultList();
+
+		// sql
 //		try (
 //			Connection conn = getConnection();
 //			PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -187,24 +174,21 @@ public class MemberDaoImpl implements MemberDao {
 //			e.printStackTrace();
 //		}
 //		return null;
-		
+
 	}
 
 	@Override
 	public Member selectByUsername(String username) {
-		
-		//criteria
+
+		// criteria
 		Session session = getSession();
 		CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
 		CriteriaQuery<Member> criteriaQuery = criteriaBuilder.createQuery(Member.class);
 		Root<Member> root = criteriaQuery.from(Member.class);
 		criteriaQuery.where(criteriaBuilder.equal(root.get("username"), username));
-		return session
-				.createQuery(criteriaQuery)
-				.uniqueResult();
-		
-		
-		//JDBC
+		return session.createQuery(criteriaQuery).uniqueResult();
+
+		// JDBC
 //		final String sql = "select * from MEMBER where USERNAME = ?";
 //		try (
 //			Connection conn = getConnection();
@@ -232,21 +216,18 @@ public class MemberDaoImpl implements MemberDao {
 //		}
 //		return null;
 	}
-	
+
 	@Override
 	public Member selectForLogin(String username, String password) {
-		
-		//Native
+
+		// Native
 		final String sql = "select * from MEMBER where USERNAME = :username and PASSWORD = :password";
-		return getSession().createNativeQuery(sql, Member.class)
-				.setParameter("username", username)
-				.setParameter("password", password)
-				.uniqueResult();
-		
-		
-		//JDBC
+		return getSession().createNativeQuery(sql, Member.class).setParameter("username", username)
+				.setParameter("password", password).uniqueResult();
+
+		// JDBC
 //		final String sql = "select * from MEMBER where USERNAME = ? and PASSWORD = ?";
-				
+
 //		try (
 //			Connection conn = getConnection();
 //			PreparedStatement pstmt = conn.prepareStatement(sql)) {
